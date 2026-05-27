@@ -438,3 +438,11 @@ document.getElementById('btn-reset-global-design').addEventListener('click', () 
     loadLayoutIntoInputs();
     alert("글로벌 테마가 기본값으로 초기화되었습니다.");
 });
+
+document.getElementById('btn-apply-design').addEventListener('click', () => {
+    window.saveToURL();
+    const btn = document.getElementById('btn-apply-design');
+    const originalText = btn.innerText;
+    btn.innerText = "✔️ 저장 완료!"; btn.style.background = "#3b82f6"; btn.style.color = "#fff";
+    setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; btn.style.color = ""; }, 1000);
+});
