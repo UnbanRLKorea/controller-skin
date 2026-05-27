@@ -56,6 +56,8 @@ function updateLoop() {
             const angleL = Math.atan2(moveY_L, moveX_L) * (180 / Math.PI);
             lineL.style.width = `${distL}px`;
             lineL.style.transform = `rotate(${angleL}deg)`;
+            // 글로벌 효과 색상을 방향 지시선 색상에 적용
+            lineL.style.setProperty('--stick-line-color', hexAtoRGBA(window.appState.g.efC));
         } else {
             lineL.style.display = 'none';
         }
@@ -71,6 +73,8 @@ function updateLoop() {
             const angleR = Math.atan2(moveY_R, moveX_R) * (180 / Math.PI);
             lineR.style.width = `${distR}px`;
             lineR.style.transform = `rotate(${angleR}deg)`;
+            // 글로벌 효과 색상을 방향 지시선 색상에 적용
+            lineR.style.setProperty('--stick-line-color', hexAtoRGBA(window.appState.g.efC));
         } else {
             lineR.style.display = 'none';
         }

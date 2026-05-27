@@ -55,7 +55,7 @@
 #btn-12 { left: 150px; top: 145px; } #btn-13 { left: 150px; top: 205px; } #btn-14 { left: 120px; top: 175px; } #btn-15 { left: 180px; top: 175px; } 
 
 .stick-area { position: absolute; width: 80px; height: 80px; background: #111; border-radius: 50%; }
-.stick-line { position: absolute; top: 40px; left: 40px; height: 3px; margin-top: -1.5px; background: #fff; transform-origin: 0% 50%; pointer-events: none; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 20; border-radius: 2px; }
+.stick-line { position: absolute; top: 40px; left: 40px; height: 3px; margin-top: -1.5px; background: var(--stick-line-color, var(--effect-color, #00ff88)); transform-origin: 0% 50%; pointer-events: none; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 20; border-radius: 2px; }
 .stick { width: 50px; height: 50px; top: 15px; left: 15px; } 
 .stick.active .layer-effect { box-shadow: inset 0 0 5px #000, 0 0 15px var(--glow-color, #00ff88); }
 #area-stick-l { left: 60px; top: 55px; } #area-stick-r { left: 300px; top: 150px; }
