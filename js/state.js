@@ -1,8 +1,9 @@
 // 상태 구조: g(글로벌 테마), l(개별 오버라이드), m(매핑), s(옵션), c(컨트롤러 바디)
+// 색상 형식: #RRGGBBAA (RGBA 헥사데시멀) - 마지막 2자리가 투명도 (00=완전 투명, FF=완전 불투명)
 window.appState = {
     m: {}, l: {}, s: { showStickLine: false },
-    g: { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' },
-    c: { bgC: '#222222', bgI: '', w: 500, h: 300 }
+    g: { bgC: '#444444FF', efC: '#00ff88FF', txtC: '#888888FF', txtAC: '#000000FF', bgI: '', efI: '' },
+    c: { bgC: '#222222FF', bgI: '', w: 500, h: 300 }
 };
 
 window.baseVisuals = {
@@ -42,11 +43,21 @@ window.loadFromURL = function() {
             if (!window.appState.m) window.appState.m = {};
             if (!window.appState.l) window.appState.l = {};
             if (!window.appState.s) window.appState.s = { showStickLine: false };
-            if (!window.appState.g) window.appState.g = { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' };
-            if (!window.appState.c) window.appState.c = { bgC: '#222222', bgI: '', w: 500, h: 300 };
+            if (!window.appState.g) window.appState.g = { bgC: '#444444CC', efC: '#00ff88CC', txtC: '#888888CC', txtAC: '#000000CC', bgI: '', efI: '' };
+            if (!window.appState.c) window.appState.c = { bgC: '#222222FF', bgI: '', w: 500, h: 300 };
         } catch(e) {}
     }
 };
+
+// RGBA 헥사데시멀 (#RRGGBBAA)을 CSS rgba() 문자열로 변환
+function hexAtoRGBA(hexA) {
+    if (!hexA || hexA.length !== 9) return hexA; // 유효하지 않은 형식은 그대로 반환
+    const r = parseInt(hexA.slice(1, 3), 16);
+    const g = parseInt(hexA.slice(3, 5), 16);
+    const b = parseInt(hexA.slice(5, 7), 16);
+    const a = parseInt(hexA.slice(7, 9), 16) / 255;
+    return `rgba(${r}, ${g}, ${b}, ${a.toFixed(2)})`;
+}
 
 // [NEW] 개별 객체에 CSS 변수를 찔러넣어 색상/이미지를 적용하는 핵심 함수
 window.applyCustomization = function(id) {
@@ -61,10 +72,10 @@ window.applyCustomization = function(id) {
     let g = window.appState.g;
 
     // 우선순위: 개별 오버라이드 값(l) > 글로벌 테마 값(g) > 하드코딩 기본값
-    let bgC = l.bgC || g.bgC || '#444444';
-    let efC = l.efC || g.efC || '#00ff88';
-    let txtC = l.txtC || g.txtC || '#888888';
-    let txtAC = l.txtAC || g.txtAC || '#000000';
+    let bgC = l.bgC || g.bgC || '#444444CC';
+    let efC = l.efC || g.efC || '#00ff88CC';
+    let txtC = l.txtC || g.txtC || '#888888CC';
+    let txtAC = l.txtAC || g.txtAC || '#000000CC';
     
     let bgI = l.bgI ? `url(${l.bgI})` : (g.bgI ? `url(${g.bgI})` : 'none');
     let efI = l.efI ? `url(${l.efI})` : (g.efI ? `url(${g.efI})` : 'none');
@@ -73,13 +84,13 @@ window.applyCustomization = function(id) {
     let applyTarget = el;
     if (id.includes('stick-')) applyTarget = document.getElementById(id); // wrapper인 stick-l, stick-r 지목
 
-    applyTarget.style.setProperty('--bg-color', bgC);
+    applyTarget.style.setProperty('--bg-color', hexAtoRGBA(bgC));
     applyTarget.style.setProperty('--bg-image', bgI);
-    applyTarget.style.setProperty('--effect-color', efC);
-    applyTarget.style.setProperty('--glow-color', efC);
+    applyTarget.style.setProperty('--effect-color', hexAtoRGBA(efC));
+    applyTarget.style.setProperty('--glow-color', hexAtoRGBA(efC));
     applyTarget.style.setProperty('--effect-image', efI);
-    applyTarget.style.setProperty('--text-color', txtC);
-    applyTarget.style.setProperty('--text-active-color', txtAC);
+    applyTarget.style.setProperty('--text-color', hexAtoRGBA(txtC));
+    applyTarget.style.setProperty('--text-active-color', hexAtoRGBA(txtAC));
 };
 
 window.applyAllCustomizations = function() {

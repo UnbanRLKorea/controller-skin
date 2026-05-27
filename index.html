@@ -77,10 +77,22 @@
             <div id="pane-design" class="tab-pane">
                 <div class="section-title">색상 및 이미지 설정</div>
                 <div class="editor-grid design-grid">
-                    <label>평상시 색상<input type="color" id="edit-bgC"></label>
-                    <label>효과 색상<input type="color" id="edit-efC"></label>
-                    <label>텍스트 색상<input type="color" id="edit-txtC"></label>
-                    <label>효과 텍스트<input type="color" id="edit-txtAC"></label>
+                    <div class="color-alpha-group">
+                        <label>평상시 색상<input type="color" id="edit-bgC"></label>
+                        <label>불투명도 <input type="range" id="edit-bgC-alpha" min="0" max="1" step="0.01" value="1"></label>
+                    </div>
+                    <div class="color-alpha-group">
+                        <label>효과 색상<input type="color" id="edit-efC"></label>
+                        <label>불투명도 <input type="range" id="edit-efC-alpha" min="0" max="1" step="0.01" value="1"></label>
+                    </div>
+                    <div class="color-alpha-group">
+                        <label>텍스트 색상<input type="color" id="edit-txtC"></label>
+                        <label>불투명도 <input type="range" id="edit-txtC-alpha" min="0" max="1" step="0.01" value="1"></label>
+                    </div>
+                    <div class="color-alpha-group">
+                        <label>효과 텍스트<input type="color" id="edit-txtAC"></label>
+                        <label>불투명도 <input type="range" id="edit-txtAC-alpha" min="0" max="1" step="0.01" value="1"></label>
+                    </div>
                 </div>
 
                     <details class="image-url-details" style="margin-top: 10px; font-size: 13px;">

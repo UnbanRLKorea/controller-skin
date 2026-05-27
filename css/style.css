@@ -36,6 +36,35 @@ body.edit-mode .btn-wrapper:active, body.edit-mode .stick-area:active, body.edit
 /* 디자인 탭 전용 그리드 (2열로 색상 피커 배치) */
 .design-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
+/* 색상 + 불투명도 슬라이더 그룹 */
+.color-alpha-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+.color-alpha-group label {
+    font-size: 11px;
+    color: #aaa;
+    gap: 4px;
+    white-space: nowrap;
+}
+.color-alpha-group input[type="range"] {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    background: #111;
+    border: 1px solid #555;
+    color: white;
+    padding: 4px;
+    border-radius: 4px;
+    outline: none;
+    transition: border 0.2s;
+    cursor: pointer;
+}
+.color-alpha-group input[type="range"]:focus {
+    border-color: #00ff88;
+}
+
 /* URL 텍스트 입력 필드 공통 스타일 */
 .url-input {
     width: 100% !important;

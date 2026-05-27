@@ -115,10 +115,31 @@ function loadLayoutIntoInputs() {
         textInput.disabled = false; textInput.placeholder = "예: C, Z, M1";
     }
 
-    document.getElementById('edit-bgC').value = l.bgC || g.bgC;
-    document.getElementById('edit-efC').value = l.efC || g.efC;
-    document.getElementById('edit-txtC').value = l.txtC || g.txtC;
-    document.getElementById('edit-txtAC').value = l.txtAC || g.txtAC;
+    // RGBA 헥사데시멀 (#RRGGBBAA)에서 색상과 alpha 분리
+    function parseHexA(hexA) {
+        if (!hexA || hexA.length !== 9) return { color: hexA || '#000000', alpha: 1.0 };
+        const r = parseInt(hexA.slice(1, 3), 16);
+        const g = parseInt(hexA.slice(3, 5), 16);
+        const b = parseInt(hexA.slice(5, 7), 16);
+        const a = parseInt(hexA.slice(7, 9), 16) / 255;
+        // RGB를 CSS color input 형식 (#RRGGBB)으로 변환
+        const color = '#' + hexA.slice(1, 7);
+        return { color, alpha: a };
+    }
+    
+    const bgParsed = parseHexA(l.bgC || g.bgC);
+    const efParsed = parseHexA(l.efC || g.efC);
+    const txtCParsed = parseHexA(l.txtC || g.txtC);
+    const txtACParsed = parseHexA(l.txtAC || g.txtAC);
+    
+    document.getElementById('edit-bgC').value = bgParsed.color;
+    document.getElementById('edit-bgC-alpha').value = bgParsed.alpha;
+    document.getElementById('edit-efC').value = efParsed.color;
+    document.getElementById('edit-efC-alpha').value = efParsed.alpha;
+    document.getElementById('edit-txtC').value = txtCParsed.color;
+    document.getElementById('edit-txtC-alpha').value = txtCParsed.alpha;
+    document.getElementById('edit-txtAC').value = txtACParsed.color;
+    document.getElementById('edit-txtAC-alpha').value = txtACParsed.alpha;
     document.getElementById('edit-bgI').value = l.bgI || '';
     document.getElementById('edit-efI').value = l.efI || '';
 
@@ -144,10 +165,27 @@ function updateLayoutRealtime() {
     l.r = parseInt(document.getElementById('edit-r').value) || 0;
     l.t = document.getElementById('edit-text').value;
 
-    const bgC = document.getElementById('edit-bgC').value; if(bgC !== window.appState.g.bgC) l.bgC = bgC; else delete l.bgC;
-    const efC = document.getElementById('edit-efC').value; if(efC !== window.appState.g.efC) l.efC = efC; else delete l.efC;
-    const txtC = document.getElementById('edit-txtC').value; if(txtC !== window.appState.g.txtC) l.txtC = txtC; else delete l.txtC;
-    const txtAC = document.getElementById('edit-txtAC').value; if(txtAC !== window.appState.g.txtAC) l.txtAC = txtAC; else delete l.txtAC;
+    // 색상과 alpha를 결합하여 #RRGGBBAA 형식으로 저장
+    function combineColorAlpha(color, alpha) {
+        const a = Math.round(parseFloat(alpha) * 255).toString(16).padStart(2, '0');
+        return color + a;
+    }
+    
+    const bgC = document.getElementById('edit-bgC').value;
+    const bgAlpha = document.getElementById('edit-bgC-alpha').value;
+    if(bgC + bgAlpha !== window.appState.g.bgC) l.bgC = combineColorAlpha(bgC, bgAlpha); else delete l.bgC;
+    
+    const efC = document.getElementById('edit-efC').value;
+    const efAlpha = document.getElementById('edit-efC-alpha').value;
+    if(efC + efAlpha !== window.appState.g.efC) l.efC = combineColorAlpha(efC, efAlpha); else delete l.efC;
+    
+    const txtC = document.getElementById('edit-txtC').value;
+    const txtCAlpha = document.getElementById('edit-txtC-alpha').value;
+    if(txtC + txtCAlpha !== window.appState.g.txtC) l.txtC = combineColorAlpha(txtC, txtCAlpha); else delete l.txtC;
+    
+    const txtAC = document.getElementById('edit-txtAC').value;
+    const txtACAlpha = document.getElementById('edit-txtAC-alpha').value;
+    if(txtAC + txtACAlpha !== window.appState.g.txtAC) l.txtAC = combineColorAlpha(txtAC, txtACAlpha); else delete l.txtAC;
     
     l.bgI = document.getElementById('edit-bgI').value || undefined;
     l.efI = document.getElementById('edit-efI').value || undefined;
@@ -232,10 +270,17 @@ inputs.forEach(id => {
 
 document.getElementById('btn-apply-global').addEventListener('click', () => {
     const g = window.appState.g;
-    g.bgC = document.getElementById('edit-bgC').value;
-    g.efC = document.getElementById('edit-efC').value;
-    g.txtC = document.getElementById('edit-txtC').value;
-    g.txtAC = document.getElementById('edit-txtAC').value;
+    
+    // 색상과 alpha를 결합하여 #RRGGBBAA 형식으로 저장
+    function combineColorAlpha(color, alpha) {
+        const a = Math.round(parseFloat(alpha) * 255).toString(16).padStart(2, '0');
+        return color + a;
+    }
+    
+    g.bgC = combineColorAlpha(document.getElementById('edit-bgC').value, document.getElementById('edit-bgC-alpha').value);
+    g.efC = combineColorAlpha(document.getElementById('edit-efC').value, document.getElementById('edit-efC-alpha').value);
+    g.txtC = combineColorAlpha(document.getElementById('edit-txtC').value, document.getElementById('edit-txtC-alpha').value);
+    g.txtAC = combineColorAlpha(document.getElementById('edit-txtAC').value, document.getElementById('edit-txtAC-alpha').value);
     g.bgI = document.getElementById('edit-bgI').value;
     g.efI = document.getElementById('edit-efI').value;
 
@@ -259,6 +304,12 @@ document.getElementById('btn-reset-design').addEventListener('click', () => {
     }
     loadLayoutIntoInputs(); window.applyCustomization(id); window.saveToURL();
 });
+
+// [추가] alpha 슬라이더에도 input 이벤트 리스너 연결
+document.getElementById('edit-bgC-alpha').addEventListener('input', updateLayoutRealtime);
+document.getElementById('edit-efC-alpha').addEventListener('input', updateLayoutRealtime);
+document.getElementById('edit-txtC-alpha').addEventListener('input', updateLayoutRealtime);
+document.getElementById('edit-txtAC-alpha').addEventListener('input', updateLayoutRealtime);
 
 const modal = document.getElementById('settings-modal');
 function toggleModal() {
