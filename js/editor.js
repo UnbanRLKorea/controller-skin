@@ -355,3 +355,12 @@ document.getElementById('btn-reset-controller').addEventListener('click', () => 
     window.applyAllCustomizations();
     window.saveToURL();
 });
+
+document.getElementById('btn-reset-global-design').addEventListener('click', () => {
+    if (!confirm("글로벌 테마를 기본값으로 초기화합니다. 계속하시겠습니까?")) return;
+    window.appState.g = { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' };
+    window.applyAllCustomizations();
+    window.saveToURL();
+    loadLayoutIntoInputs();
+    alert("글로벌 테마가 기본값으로 초기화되었습니다.");
+});

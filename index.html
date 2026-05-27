@@ -67,6 +67,11 @@
                     <label class="text-full-width">버튼 텍스트 (옵션)<input type="text" id="edit-text" placeholder="예: C, Z, M1"></label>
                     <label class="text-full-width">테두리 둥글기 (Border Radius px)<input type="number" id="edit-r" placeholder="50 = 원형, 5 = 네모"></label>
                 </div>
+
+                <div class="editor-actions" style="margin-top: 15px;">
+                    <button class="btn-warning" id="btn-reset-layout">레이아웃/버튼 삭제</button>
+                    <button class="btn-primary" id="btn-apply-layout">💾 설정 저장</button>
+                </div>
             </div>
 
             <div id="pane-design" class="tab-pane">
@@ -99,7 +104,10 @@
 
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="btn-primary" id="btn-apply-global" style="flex:1;">🌍 현재 디자인을 전체 기본 테마로 설정</button>
-                    <button class="btn-secondary" id="btn-reset-design" title="개별 디자인 설정 지우기">↺ 초기화</button>
+                    <button class="btn-secondary" id="btn-reset-design" title="개별 버튼 디자인 설정 지우기">↺ 개별 설정 초기화</button>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px; padding-top: 10px; border-top: 1px solid #333;">
+                    <button class="btn-danger" id="btn-reset-global-design" title="글로벌 테마를 기본값으로 초기화" style="flex:1;">🌍 글로벌 테마 초기화</button>
                 </div>
             </div>
 
@@ -122,11 +130,6 @@
                 </div>
             </div>
 
-            <div class="editor-actions" style="margin-top: 15px;">
-                <button class="btn-warning" id="btn-reset-layout">레이아웃/버튼 삭제</button>
-                <button class="btn-primary" id="btn-apply-layout">💾 설정 저장</button>
-            </div>
-
             <div class="section-title">하드웨어 입력 매핑</div>
             <div class="mapping-control">
                 <select id="map-src"></select> <span>➡️</span> <select id="map-tgt"></select>
@@ -134,7 +137,7 @@
             </div>
             <ul class="mapping-list" id="mapping-list"></ul>
 
-            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 10px; cursor: pointer;">
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 10px; cursor: pointer; margin-top: 10px;">
                 <input type="checkbox" id="toggle-stick-line" style="width:16px; height:16px;"> 스틱 방향 지시선 표시
             </label>
 
