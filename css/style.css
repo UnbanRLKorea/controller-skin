@@ -52,6 +52,16 @@ body.edit-mode .btn-wrapper:active, body.edit-mode .stick-area:active, body.edit
 .url-input:focus {
     border-color: #00ff88;
 }
+
+/* 이미지 URL 레이블을 .editor-grid label과 동일하게 스타일 적용 */
+.image-url-details .editor-grid-url-item label {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px;
+    color: #aaa;
+    gap: 4px;
+    white-space: nowrap;
+}
 .warning-text { font-size: 11px; color: #ffaa00; background: rgba(255, 170, 0, 0.1); padding: 8px; border-radius: 5px; margin-top: 5px; word-break: keep-all; white-space: normal; }
 
 .editor-actions { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 20px; }
