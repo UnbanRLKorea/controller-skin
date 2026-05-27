@@ -31,6 +31,21 @@ window.hardwareInputNames = {
 
 window.saveToURL = function() {
     try {
+       // [자동 압축 로직] 인코딩하기 직전에 개별 버튼 데이터(l)를 순회하며 글로벌(g)과 겹치거나 비어있는 찌꺼기를 날려버립니다.
+       if (window.appState.l && window.appState.g) {
+           const g = window.appState.g;
+           for (const id in window.appState.l) {
+               const l = window.appState.l[id];
+               if (l.bgC && l.bgC.toLowerCase() === g.bgC.toLowerCase()) delete l.bgC;
+               if (l.efC && l.efC.toLowerCase() === g.efC.toLowerCase()) delete l.efC;
+               if (l.txtC && l.txtC.toLowerCase() === g.txtC.toLowerCase()) delete l.txtC;
+               if (l.txtAC && l.txtAC.toLowerCase() === g.txtAC.toLowerCase()) delete l.txtAC;
+               if (!l.bgI || l.bgI === g.bgI) delete l.bgI;
+               if (!l.efI || l.efI === g.efI) delete l.efI;
+               if (!l.t) delete l.t;
+           }
+       }
+
         const b64 = btoa(encodeURIComponent(JSON.stringify(window.appState))); 
         const url = new URL(window.location.href);
         url.searchParams.set('cfg', b64);

@@ -199,22 +199,31 @@ function updateLayoutRealtime() {
     
     const bgC = document.getElementById('edit-bgC').value;
     const bgAlpha = document.getElementById('edit-bgC-alpha').value;
-    if(bgC + bgAlpha !== window.appState.g.bgC) l.bgC = combineColorAlpha(bgC, bgAlpha); else delete l.bgC;
+    const currentBgC = combineColorAlpha(bgC, bgAlpha);
+    if(currentBgC.toLowerCase() !== window.appState.g.bgC.toLowerCase()) l.bgC = currentBgC; else delete l.bgC;
     
     const efC = document.getElementById('edit-efC').value;
     const efAlpha = document.getElementById('edit-efC-alpha').value;
-    if(efC + efAlpha !== window.appState.g.efC) l.efC = combineColorAlpha(efC, efAlpha); else delete l.efC;
-    
+    const currentEfC = combineColorAlpha(efC, efAlpha);
+    if(currentEfC.toLowerCase() !== window.appState.g.efC.toLowerCase()) l.efC = currentEfC; else delete l.efC;
+
     const txtC = document.getElementById('edit-txtC').value;
     const txtCAlpha = document.getElementById('edit-txtC-alpha').value;
-    if(txtC + txtCAlpha !== window.appState.g.txtC) l.txtC = combineColorAlpha(txtC, txtCAlpha); else delete l.txtC;
-    
+    const currentTxtC = combineColorAlpha(txtC, txtCAlpha);
+    if(currentTxtC.toLowerCase() !== window.appState.g.txtC.toLowerCase()) l.txtC = currentTxtC; else delete l.txtC;
+
     const txtAC = document.getElementById('edit-txtAC').value;
     const txtACAlpha = document.getElementById('edit-txtAC-alpha').value;
-    if(txtAC + txtACAlpha !== window.appState.g.txtAC) l.txtAC = combineColorAlpha(txtAC, txtACAlpha); else delete l.txtAC;
-    
-    l.bgI = document.getElementById('edit-bgI').value || undefined;
-    l.efI = document.getElementById('edit-efI').value || undefined;
+    const currentTxtAC = combineColorAlpha(txtAC, txtACAlpha);
+    if(currentTxtAC.toLowerCase() !== window.appState.g.txtAC.toLowerCase()) l.txtAC = currentTxtAC; else delete l.txtAC;
+
+    const bgI = document.getElementById('edit-bgI').value;
+    if (bgI) l.bgI = bgI; else delete l.bgI;
+
+    const efI = document.getElementById('edit-efI').value;
+    if (efI) l.efI = efI; else delete l.efI;
+
+    if (!l.t) delete l.t;
 
     window.applyLayouts(); 
     loadLayoutIntoInputs(); 
@@ -508,7 +517,7 @@ document.getElementById('btn-reset-controller').addEventListener('click', () => 
 
 document.getElementById('btn-reset-global-design').addEventListener('click', () => {
     if (!confirm(window.t("confirm_glob_reset"))) return;
-    window.appState.g = { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' };
+    window.appState.g = { bgC: '#444444FF', efC: '#00ff88FF', txtC: '#888888FF', txtAC: '#000000FF', bgI: '', efI: '' };
     window.applyAllCustomizations();
     window.saveToURL();
     loadLayoutIntoInputs();
