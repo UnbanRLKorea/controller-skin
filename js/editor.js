@@ -25,9 +25,17 @@ window.applyLayouts = function() {
             if (layout.r !== undefined && layout.r !== '') el.style.borderRadius = layout.r + 'px';
             el.style.right = 'auto'; el.style.bottom = 'auto';
             
-            if (layout.t !== undefined && !targetDomId.includes('area-stick') && !targetDomId.includes('trigger-box')) {
+            // 텍스트 적용: 개별 설정 > 기본 텍스트(baseLayouts) 순서로 적용
+            if (!targetDomId.includes('area-stick') && !targetDomId.includes('trigger-box')) {
                 const textNode = el.querySelector('.btn-text');
-                if(textNode) textNode.innerText = layout.t;
+                if(textNode) {
+                    let text = layout.t;
+                    // 개별 텍스트 설정이 없을 때 기본 텍스트 적용
+                    if (text === undefined && window.baseLayouts && window.baseLayouts[id]) {
+                        text = window.baseLayouts[id];
+                    }
+                    textNode.innerText = text || '';
+                }
             }
         }
     }
