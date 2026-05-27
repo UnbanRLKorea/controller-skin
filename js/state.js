@@ -2,7 +2,7 @@
 window.appState = {
     m: {}, l: {}, s: { showStickLine: false },
     g: { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' },
-    c: { bgC: '#222222', bgI: '' }
+    c: { bgC: '#222222', bgI: '', w: 500, h: 300 }
 };
 
 window.baseVisuals = {
@@ -43,7 +43,7 @@ window.loadFromURL = function() {
             if (!window.appState.l) window.appState.l = {};
             if (!window.appState.s) window.appState.s = { showStickLine: false };
             if (!window.appState.g) window.appState.g = { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' };
-            if (!window.appState.c) window.appState.c = { bgC: '#222222', bgI: '' };
+            if (!window.appState.c) window.appState.c = { bgC: '#222222', bgI: '', w: 500, h: 300 };
         } catch(e) {}
     }
 };
@@ -100,5 +100,10 @@ window.applyAllCustomizations = function() {
         controller.style.setProperty('--controller-shadow', bgI === 'none' ? '0 10px 30px rgba(0,0,0,0.5)' : 'none');
         // 이미지가 지정되면 모서리 제거하여 이미지 전체 표시, 아니면 기본 둥근 모서리 유지
         controller.style.setProperty('--controller-border-radius', bgI === 'none' ? '100px 100px 50px 50px' : '0');
+        // 너비/높이 적용
+        let w = window.appState.c.w;
+        let h = window.appState.c.h;
+        if (w !== undefined && w !== '') controller.style.width = w + 'px';
+        if (h !== undefined && h !== '') controller.style.height = h + 'px';
     }
 };

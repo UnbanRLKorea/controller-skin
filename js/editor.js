@@ -301,6 +301,8 @@ function loadControllerSettings() {
     document.getElementById('ctrl-bgC').value = c.bgC || '#222222';
     document.getElementById('ctrl-bgC-text').value = c.bgC || '#222222';
     document.getElementById('ctrl-bgI').value = c.bgI || '';
+    document.getElementById('ctrl-w').value = c.w || 500;
+    document.getElementById('ctrl-h').value = c.h || 300;
 }
 
 function updateControllerPreview() {
@@ -308,12 +310,27 @@ function updateControllerPreview() {
     document.getElementById('ctrl-bgC-text').value = bgC;
 }
 
+function updateControllerSize() {
+    if (!window.appState.c) window.appState.c = {};
+    window.appState.c.w = parseInt(document.getElementById('ctrl-w').value) || 500;
+    window.appState.c.h = parseInt(document.getElementById('ctrl-h').value) || 300;
+    
+    const controller = document.getElementById('gamepad-ui');
+    if (controller) {
+        controller.style.width = window.appState.c.w + 'px';
+        controller.style.height = window.appState.c.h + 'px';
+    }
+}
+
 function applyControllerSettings() {
     if (!window.appState.c) window.appState.c = {};
     window.appState.c.bgC = document.getElementById('ctrl-bgC').value || '#222222';
     window.appState.c.bgI = document.getElementById('ctrl-bgI').value || '';
+    window.appState.c.w = parseInt(document.getElementById('ctrl-w').value) || 500;
+    window.appState.c.h = parseInt(document.getElementById('ctrl-h').value) || 300;
 
     window.applyAllCustomizations();
+    window.applyControllerSize();
     window.saveToURL();
 
     const btn = document.getElementById('btn-apply-controller');
@@ -329,9 +346,11 @@ function applyControllerSettings() {
 document.getElementById('btn-apply-controller').addEventListener('click', applyControllerSettings);
 
 document.getElementById('ctrl-bgC').addEventListener('input', updateControllerPreview);
+document.getElementById('ctrl-w').addEventListener('input', updateControllerSize);
+document.getElementById('ctrl-h').addEventListener('input', updateControllerSize);
 
 document.getElementById('btn-reset-controller').addEventListener('click', () => {
-    window.appState.c = { bgC: '#222222', bgI: '' };
+    window.appState.c = { bgC: '#222222', bgI: '', w: 500, h: 300 };
     loadControllerSettings();
     window.applyAllCustomizations();
     window.saveToURL();
