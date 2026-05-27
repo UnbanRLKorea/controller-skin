@@ -7,8 +7,8 @@ const translations = {
         "status_connected": "✅ 연결됨: ",
         "status_disconnected": "❌ 컨트롤러 연결 끊김",
         
-        "tab_layout": "📐 레이아웃",
-        "tab_design": "🎨 디자인 (색상/이미지)",
+        "tab_layout": "📐 기본 속성",
+        "tab_design": "🎨 스타일 (색상/이미지)",
         "tab_controller": "🎮 컨트롤러 바디",
         
         "title_layout": "위치 및 크기 조절",
@@ -72,8 +72,8 @@ const translations = {
         "status_connected": "✅ Connected: ",
         "status_disconnected": "❌ Controller Disconnected",
         
-        "tab_layout": "📐 Layout",
-        "tab_design": "🎨 Design",
+        "tab_layout": "📐 Base Properties",
+        "tab_design": "🎨 Style",
         "tab_controller": "🎮 Controller Body",
         
         "title_layout": "Position & Size",
