@@ -9,7 +9,12 @@ window.applyLayouts = function() {
         if (id === 'stick-l') targetDomId = 'area-stick-l';
         if (id === 'stick-r') targetDomId = 'area-stick-r';
         
+        // 스틱인 경우: area-stick-l/r은 배경원, stick-l/r은 스틱 헤드
         let el = document.getElementById(targetDomId);
+        let stickEl = null;
+        if (id === 'stick-l' || id === 'stick-r') {
+            stickEl = document.getElementById(id);
+        }
 
         if (!el && layout.c) {
             el = document.createElement('div');
@@ -24,6 +29,19 @@ window.applyLayouts = function() {
             el.style.width = layout.w + 'px'; el.style.height = layout.h + 'px';
             if (layout.r !== undefined && layout.r !== '') el.style.borderRadius = layout.r + 'px';
             el.style.right = 'auto'; el.style.bottom = 'auto';
+            
+            // 스틱인 경우: 스틱 헤드의 크기와 위치를 배경원에 비례하게 조정
+            if (stickEl && (id === 'stick-l' || id === 'stick-r')) {
+                // 스틱 헤드 크기를 배경원 크기의 60%로 (기본 80x80 -> 50x50 비율)
+                const stickHeadSize = Math.round(layout.w * 0.625);
+                stickEl.style.width = stickHeadSize + 'px';
+                stickEl.style.height = stickHeadSize + 'px';
+                // 중심 정렬: (배경원 너비 - 스틱 헤드 너비) / 2
+                const centeredTop = Math.round((layout.h - stickHeadSize) / 2);
+                const centeredLeft = Math.round((layout.w - stickHeadSize) / 2);
+                stickEl.style.top = centeredTop + 'px';
+                stickEl.style.left = centeredLeft + 'px';
+            }
             
             // 텍스트 적용: 개별 설정 > 기본 텍스트(baseLayouts) 순서로 적용
             if (!targetDomId.includes('area-stick') && !targetDomId.includes('trigger-box')) {
