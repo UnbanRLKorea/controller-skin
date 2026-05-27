@@ -125,7 +125,7 @@ function loadLayoutIntoInputs() {
     if (l.c) { 
         btnResetLayout.innerText = "이 버튼 완전 삭제"; btnResetLayout.className = "btn-danger"; 
     } else { 
-        btnResetLayout.innerText = "레이아웃 초기화"; btnResetLayout.className = "btn-warning"; 
+        btnResetLayout.innerText = "↺ 레이아웃 초기화"; btnResetLayout.className = "btn-secondary"; 
     }
 
     document.querySelectorAll('.active-edit-target').forEach(e => e.classList.remove('active-edit-target'));
@@ -189,7 +189,7 @@ window.resetLayoutOnly = function() {
     if (window.appState.l[id].txtAC !== undefined) colors.txtAC = window.appState.l[id].txtAC;
     if (window.appState.l[id].bgI !== undefined) colors.bgI = window.appState.l[id].bgI;
     if (window.appState.l[id].efI !== undefined) colors.efI = window.appState.l[id].efI;
-    const isCustom = window.appState.l[id].c !== undefined;
+    const isCustom = window.appState.l[id].c === true;
     const text = window.appState.l[id].t !== undefined ? window.appState.l[id].t : undefined;
     
     // 각 버튼별 기본 레이아웃 값 적용
@@ -211,7 +211,12 @@ window.resetLayoutOnly = function() {
     
     // 색상/이미지 복원
     Object.assign(window.appState.l[id], colors);
-    window.appState.l[id].c = isCustom;
+    if (isCustom) {
+        window.appState.l[id].c = true;
+    } else {
+        // 기본 버튼인 경우 c 속성 제거 (undefined로 만듦)
+        delete window.appState.l[id].c;
+    }
     if (text !== undefined) window.appState.l[id].t = text;
     
     window.applyLayouts();
