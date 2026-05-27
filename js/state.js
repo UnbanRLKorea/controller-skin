@@ -7,21 +7,20 @@ window.appState = {
 };
 
 window.baseVisuals = {
-    "btn-0": "A 버튼", "btn-1": "B 버튼", "btn-2": "X 버튼", "btn-3": "Y 버튼",
-    "btn-4": "LB (좌측 범퍼)", "btn-5": "RB (우측 범퍼)",
-    "trigger-box-6": "LT (좌측 트리거)", "trigger-box-7": "RT (우측 트리거)",
-    "btn-8": "Select / Back", "btn-16": "Home / Guide", "btn-9": "Start / Menu",
-    "stick-l": "L3 (좌스틱 클릭)", "stick-r": "R3 (우스틱 클릭)",
-    "btn-12": "십자 상", "btn-13": "십자 하", "btn-14": "십자 좌", "btn-15": "십자 우"
+    "btn-0": window.t("b_a"), "btn-1": window.t("b_b"), "btn-2": window.t("b_x"), "btn-3": window.t("b_y"),
+    "btn-4": window.t("b_lb_f"), "btn-5": window.t("b_rb_f"),
+    "trigger-box-6": window.t("b_lt_f"), "trigger-box-7": window.t("b_rt_f"),
+    "btn-8": window.t("b_sel"), "btn-16": window.t("b_home"), "btn-9": window.t("b_str"),
+    "stick-l": window.t("b_l3"), "stick-r": window.t("b_r3"),
+    "btn-12": window.t("b_up"), "btn-13": window.t("b_dn"), "btn-14": window.t("b_l"), "btn-15": window.t("b_r")
 };
 
 window.hardwareInputNames = {
-    0: "A 버튼", 1: "B 버튼", 2: "X 버튼", 3: "Y 버튼",
-    4: "LB", 5: "RB", 6: "LT", 7: "RT",
-    8: "Select / Back", 9: "Start / Menu", 
-    10: "L3 (좌스틱 클릭)", 11: "R3 (우스틱 클릭)",
-    12: "십자 상", 13: "십자 하", 14: "십자 좌", 15: "십자 우",
-    16: "Home / Guide", 17: "Capture / Share"
+    0: window.t("b_a"), 1: window.t("b_b"), 2: window.t("b_x"), 3: window.t("b_y"),
+    4: window.t("b_lb"), 5: window.t("b_rb"), 6: window.t("b_lt"), 7: window.t("b_rt"),
+    8: window.t("b_sel"), 9: window.t("b_str"), 10: window.t("b_l3"), 11: window.t("b_r3"),
+    12: window.t("b_up"), 13: window.t("b_dn"), 14: window.t("b_l"), 15: window.t("b_r"),
+    16: window.t("b_home"), 17: window.t("b_cap")
 };
 
 window.saveToURL = function() {
@@ -31,7 +30,7 @@ window.saveToURL = function() {
         url.searchParams.set('cfg', b64);
         window.history.replaceState({}, '', url);
     } catch(e) {
-        alert("저장 실패! 이미지 URL이 너무 길어 주소창 용량을 초과했습니다. 짧은 URL로 변경해주세요.");
+        alert(window.t("msg_url_error"));
     }
 };
 

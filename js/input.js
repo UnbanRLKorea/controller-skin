@@ -2,7 +2,7 @@ let gamepadIndex = null;
 
 window.addEventListener("gamepadconnected", (e) => {
     gamepadIndex = e.gamepad.index;
-    document.getElementById('modal-status').innerText = `✅ 연결됨: ${e.gamepad.id}`;
+    document.getElementById('modal-status').innerText = window.t("status_connected") + e.gamepad.id;
     document.getElementById('gamepad-ui').classList.add('connected');
     requestAnimationFrame(updateLoop);
 });
@@ -10,7 +10,7 @@ window.addEventListener("gamepadconnected", (e) => {
 window.addEventListener("gamepaddisconnected", (e) => {
     if (e.gamepad.index === gamepadIndex) {
         gamepadIndex = null; 
-        document.getElementById('modal-status').innerText = "❌ 컨트롤러 연결 끊김";
+        document.getElementById('modal-status').innerText = window.t("status_disconnected");
         document.getElementById('gamepad-ui').classList.remove('connected');
     }
 });

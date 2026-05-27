@@ -60,14 +60,14 @@ window.populateDropdowns = function() {
     layoutTarget.innerHTML = ''; mapTgt.innerHTML = '';
     
     Object.entries(window.baseVisuals).forEach(([val, name]) => {
-        layoutTarget.add(new Option(`[기본] ${name}`, val));
-        mapTgt.add(new Option(`[시각화] ${name}`, val));
+        layoutTarget.add(new Option(`${window.t("opt_base")} ${name}`, val));
+        mapTgt.add(new Option(`${window.t("opt_visual")} ${name}`, val));
     });
     for (const [id, layout] of Object.entries(window.appState.l)) {
         if (layout.c) {
-            const label = `[커스텀] ${layout.t || id}`;
-            layoutTarget.add(new Option(label, id));
-            mapTgt.add(new Option(`[시각화] ${label}`, id));
+            const customName = layout.t || id;
+            layoutTarget.add(new Option(`${window.t("opt_custom")} ${customName}`, id));
+            mapTgt.add(new Option(`${window.t("opt_visual")} ${customName}`, id));
         }
     }
     if (currentValue && Array.from(layoutTarget.options).some(opt => opt.value === currentValue)) {
@@ -76,8 +76,8 @@ window.populateDropdowns = function() {
     
     if(mapSrc.options.length === 0) {
         for (let i = 0; i <= 31; i++) {
-            const displayName = window.hardwareInputNames[i] || `추가 신호`;
-            mapSrc.add(new Option(`[입력] ${displayName} (${i})`, i));
+            const displayName = window.hardwareInputNames[i] || window.t("b_extra");
+            mapSrc.add(new Option(`${window.t("opt_input")} ${displayName} (${i})`, i));
         }
     }
     toggleStickLine.checked = window.appState.s.showStickLine;
@@ -108,11 +108,11 @@ function loadLayoutIntoInputs() {
     
     const textInput = document.getElementById('edit-text');
     if (targetDomId.includes('area-stick') || targetDomId.includes('trigger-box')) {
-        textInput.value = ''; textInput.disabled = true; textInput.placeholder = "텍스트 변경 불가";
+        textInput.value = ''; textInput.disabled = true; textInput.placeholder = window.t("ph_text_disabled");
     } else {
         const textNode = el ? el.querySelector('.btn-text') : null;
         textInput.value = l.t !== undefined ? l.t : (textNode ? textNode.innerText : '');
-        textInput.disabled = false; textInput.placeholder = "예: C, Z, M1";
+        textInput.disabled = false; textInput.placeholder = window.t("ph_text");
     }
 
     // RGBA 헥사데시멀 (#RRGGBBAA)에서 색상과 alpha 분리
@@ -144,9 +144,9 @@ function loadLayoutIntoInputs() {
     document.getElementById('edit-efI').value = l.efI || '';
 
     if (l.c) { 
-        btnResetLayout.innerText = "이 버튼 완전 삭제"; btnResetLayout.className = "btn-danger"; 
+        btnResetLayout.innerText = window.t("btn_reset_custom"); btnResetLayout.className = "btn-danger";
     } else { 
-        btnResetLayout.innerText = "↺ 레이아웃 초기화"; btnResetLayout.className = "btn-secondary"; 
+        btnResetLayout.innerText = window.t("btn_reset_base"); btnResetLayout.className = "btn-secondary";
     }
 
     document.querySelectorAll('.active-edit-target').forEach(e => e.classList.remove('active-edit-target'));
@@ -292,7 +292,7 @@ document.getElementById('btn-apply-global').addEventListener('click', () => {
 
     window.applyAllCustomizations();
     window.saveToURL();
-    alert("현재 지정한 색상/이미지가 모든 버튼의 기본 테마로 덮어씌워졌습니다!");
+    alert(window.t("msg_glob_applied"));
 });
 
 document.getElementById('btn-reset-design').addEventListener('click', () => {
@@ -396,8 +396,8 @@ document.getElementById('btn-apply-layout').addEventListener('click', () => {
     window.saveToURL();
     const btn = document.getElementById('btn-apply-layout');
     const originalText = btn.innerText;
-    btn.innerText = "✔️ 저장 완료!"; btn.style.background = "#3b82f6"; btn.style.color = "#fff";
-    setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; btn.style.color = ""; }, 1000);
+    btn.innerText = window.t("msg_saved"); btn.style.background = "#3b82f6"; btn.style.color = "#fff";
+    setTimeout(() => { btn.innerText = window.t("btn_save"); btn.style.background = ""; btn.style.color = ""; }, 1000);
 });
 
 document.getElementById('btn-add-map').addEventListener('click', () => {
@@ -411,14 +411,14 @@ function renderMappingList() {
         const srcName = mapSrc.querySelector(`option[value="${src}"]`)?.text || `신호 ${src}`;
         const tgtName = mapTgt.querySelector(`option[value="${tgt}"]`)?.text || tgt;
         li.innerHTML = `<span><b>${srcName}</b> ➡️ <b>${tgtName}</b></span>
-                        <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteMap('${src}')">삭제</button>`;
+                        <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteMap('${src}')">${window.t("btn_del")}</button>`;
         list.appendChild(li);
     }
 }
 window.deleteMap = function(src) { delete window.appState.m[src]; renderMappingList(); window.saveToURL(); }
 
 document.getElementById('btn-copy-url').addEventListener('click', () => {
-    navigator.clipboard.writeText(window.location.href).then(() => alert("설정이 포함된 URL이 복사되었습니다!"));
+    navigator.clipboard.writeText(window.location.href).then(() => alert(window.t("msg_url_copied")));
 });
 
 function loadControllerSettings() {
@@ -459,7 +459,7 @@ function applyControllerSettings() {
 
     const btn = document.getElementById('btn-apply-controller');
     const originalText = btn.innerText;
-    btn.innerText = "✔️ 적용 완료!";
+    btn.innerText = window.t("msg_ctrl_applied");
     btn.style.background = "#3b82f6";
     setTimeout(() => {
         btn.innerText = originalText;
@@ -481,18 +481,18 @@ document.getElementById('btn-reset-controller').addEventListener('click', () => 
 });
 
 document.getElementById('btn-reset-global-design').addEventListener('click', () => {
-    if (!confirm("글로벌 테마를 기본값으로 초기화합니다. 계속하시겠습니까?")) return;
+    if (!confirm(window.t("confirm_glob_reset"))) return;
     window.appState.g = { bgC: '#444444', efC: '#00ff88', txtC: '#888888', txtAC: '#000000', bgI: '', efI: '' };
     window.applyAllCustomizations();
     window.saveToURL();
     loadLayoutIntoInputs();
-    alert("글로벌 테마가 기본값으로 초기화되었습니다.");
+    alert(window.t("msg_glob_reset"));
 });
 
 document.getElementById('btn-apply-design').addEventListener('click', () => {
     window.saveToURL();
     const btn = document.getElementById('btn-apply-design');
     const originalText = btn.innerText;
-    btn.innerText = "✔️ 저장 완료!"; btn.style.background = "#3b82f6"; btn.style.color = "#fff";
-    setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; btn.style.color = ""; }, 1000);
+    btn.innerText = window.t("msg_saved"); btn.style.background = "#3b82f6"; btn.style.color = "#fff";
+    setTimeout(() => { btn.innerText = window.t("btn_save"); btn.style.background = ""; btn.style.color = ""; }, 1000);
 });

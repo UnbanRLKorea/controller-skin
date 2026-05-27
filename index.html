@@ -2,13 +2,13 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Controller Skin (설정: C키)</title>
+    <title>Controller Skin</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/gamepad.css">
 </head>
 <body>
 
-    <div id="toast-hint">💡 단축키 'C'를 눌러 설정 및 레이아웃 에디터를 열 수 있습니다.</div>
+    <div id="toast-hint" data-i18n="toast_hint"></div>
 
     <div class="controller" id="gamepad-ui" style="--controller-bg-color: #222; --controller-bg-image: none;">
         <div class="trigger-container" id="trigger-box-6"><div class="layer-physical"></div><div class="trigger-bar" id="trigger-bar-6"></div></div>
@@ -43,129 +43,98 @@
 
     <div id="settings-modal" class="hidden">
         <div class="modal-content">
-            <h2>⚙️ Controller Skin 에디터 <button class="btn-secondary" style="padding: 4px 10px; font-size:12px;" id="btn-close-top">X</button></h2>
-            <div id="modal-status">⏳ 패드 연결 대기 중... (아무 버튼이나 누르세요)</div>
+            <h2><span data-i18n="modal_title"></span> <button class="btn-secondary" style="padding: 4px 10px; font-size:12px;" id="btn-close-top">✖</button></h2>
+            <div id="modal-status" data-i18n="status_waiting"></div>
 
             <div class="editor-header">
                 <select id="layout-target"></select>
-                <button class="btn-primary" id="btn-add-custom" style="padding: 6px 10px; font-size: 12px;">➕ 새 버튼</button>
+                <button class="btn-primary" id="btn-add-custom" style="padding: 6px 10px; font-size: 12px;" data-i18n="btn_add_custom"></button>
             </div>
 
             <div class="tabs">
-                <button class="tab-btn active" data-target="pane-layout">📐 레이아웃</button>
-                <button class="tab-btn" data-target="pane-design">🎨 디자인 (색상/이미지)</button>
-                <button class="tab-btn" data-target="pane-controller">🎮 컨트롤러 바디</button>
+                <button class="tab-btn active" data-target="pane-layout" data-i18n="tab_layout"></button>
+                <button class="tab-btn" data-target="pane-design" data-i18n="tab_design"></button>
+                <button class="tab-btn" data-target="pane-controller" data-i18n="tab_controller"></button>
             </div>
 
             <div id="pane-layout" class="tab-pane active">
-                <div class="section-title">위치 및 크기 조절 <span class="realtime-badge">마우스 드래그 지원 🖐️</span></div>
+                <div class="section-title"><span data-i18n="title_layout"></span> <span class="realtime-badge" data-i18n="badge_drag"></span></div>
                 <div class="editor-grid">
-                    <label>X (Left px)<input type="number" id="edit-x"></label>
-                    <label>Y (Top px)<input type="number" id="edit-y"></label>
-                    <label>너비 (W)<input type="number" id="edit-w"></label>
-                    <label>높이 (H)<input type="number" id="edit-h"></label>
-                    <label class="text-full-width">버튼 텍스트 (옵션)<input type="text" id="edit-text" placeholder="예: C, Z, M1"></label>
-                    <label class="text-full-width">테두리 둥글기 (Border Radius px)<input type="number" id="edit-r" placeholder="50 = 원형, 5 = 네모"></label>
+                    <label><span data-i18n="lbl_x"></span><input type="number" id="edit-x"></label>
+                    <label><span data-i18n="lbl_y"></span><input type="number" id="edit-y"></label>
+                    <label><span data-i18n="lbl_w"></span><input type="number" id="edit-w"></label>
+                    <label><span data-i18n="lbl_h"></span><input type="number" id="edit-h"></label>
+                    <label class="text-full-width"><span data-i18n="lbl_text"></span><input type="text" id="edit-text" data-i18n-ph="ph_text"></label>
+                    <label class="text-full-width"><span data-i18n="lbl_radius"></span><input type="number" id="edit-r" data-i18n-ph="ph_radius"></label>
                 </div>
 
                 <div class="editor-actions" style="margin-top: 15px;">
-                    <button class="btn-warning" id="btn-reset-layout" style="flex:1;">레이아웃/버튼 삭제</button>
-                    <button class="btn-primary" id="btn-apply-layout">💾 설정 저장</button>
+                    <button class="btn-secondary" id="btn-reset-layout" style="flex:1;" data-i18n="btn_del_layout"></button>
+                    <button class="btn-primary" id="btn-apply-layout" data-i18n="btn_save"></button>
                 </div>
             </div>
 
             <div id="pane-design" class="tab-pane">
-                <div class="section-title">색상 및 이미지 설정</div>
+                <div class="section-title" data-i18n="title_design"></div>
                 <div class="editor-grid design-grid">
-                    <div class="color-alpha-group">
-                        <label>평상시 색상<input type="color" id="edit-bgC"></label>
-                        <label>불투명도 <input type="range" id="edit-bgC-alpha" min="0" max="1" step="0.01" value="1"></label>
-                    </div>
-                    <div class="color-alpha-group">
-                        <label>효과 색상<input type="color" id="edit-efC"></label>
-                        <label>불투명도 <input type="range" id="edit-efC-alpha" min="0" max="1" step="0.01" value="1"></label>
-                    </div>
-                    <div class="color-alpha-group">
-                        <label>텍스트 색상<input type="color" id="edit-txtC"></label>
-                        <label>불투명도 <input type="range" id="edit-txtC-alpha" min="0" max="1" step="0.01" value="1"></label>
-                    </div>
-                    <div class="color-alpha-group">
-                        <label>효과 텍스트<input type="color" id="edit-txtAC"></label>
-                        <label>불투명도 <input type="range" id="edit-txtAC-alpha" min="0" max="1" step="0.01" value="1"></label>
-                    </div>
+                    <div class="color-alpha-group"><label><span data-i18n="lbl_bg_c"></span><input type="color" id="edit-bgC"></label><label><span data-i18n="lbl_alpha"></span><input type="range" id="edit-bgC-alpha" min="0" max="1" step="0.01" value="1"></label></div>
+                    <div class="color-alpha-group"><label><span data-i18n="lbl_ef_c"></span><input type="color" id="edit-efC"></label><label><span data-i18n="lbl_alpha"></span><input type="range" id="edit-efC-alpha" min="0" max="1" step="0.01" value="1"></label></div>
+                    <div class="color-alpha-group"><label><span data-i18n="lbl_txt_c"></span><input type="color" id="edit-txtC"></label><label><span data-i18n="lbl_alpha"></span><input type="range" id="edit-txtC-alpha" min="0" max="1" step="0.01" value="1"></label></div>
+                    <div class="color-alpha-group"><label><span data-i18n="lbl_txt_ac"></span><input type="color" id="edit-txtAC"></label><label><span data-i18n="lbl_alpha"></span><input type="range" id="edit-txtAC-alpha" min="0" max="1" step="0.01" value="1"></label></div>
                 </div>
+                <details class="image-url-details" style="margin-top: 10px; font-size: 13px;">
+                    <summary style="cursor: pointer; font-weight: bold; color: #888;" data-i18n="summary_img"></summary>
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
+                        <div class="editor-grid-url-item"><label class="text-full-width"><span data-i18n="lbl_bg_img"></span><input type="text" id="edit-bgI" class="url-input" data-i18n-ph="ph_bg_img"></label></div>
+                        <div class="editor-grid-url-item"><label class="text-full-width"><span data-i18n="lbl_ef_img"></span><input type="text" id="edit-efI" class="url-input" data-i18n-ph="ph_ef_img"></label></div>
+                        <div class="text-full-width"><p style="margin-top: 8px; color: #c9302c; font-size: 12px;" data-i18n="warn_url"></p></div>
+                    </div>
+                </details>
 
-                    <details class="image-url-details" style="margin-top: 10px; font-size: 13px;">
-                        <summary style="cursor: pointer; font-weight: bold; color: #888;">🖼️ 이미지 URL 설정</summary>
-                        <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #ddd; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px;">
-                            <div class="editor-grid-url-item">
-                                <label class="text-full-width">평상시 이미지 URL
-                                    <input type="text" id="edit-bgI" class="url-input" placeholder="https://... (imgur 등의 짧은 주소 권장)">
-                                </label>
-                            </div>
-                            <div class="editor-grid-url-item">
-                                <label class="text-full-width">활성화 효과 이미지 URL
-                                    <input type="text" id="edit-efI" class="url-input" placeholder="https://... (배경이 투명한 PNG 권장)">
-                                </label>
-                            </div>
-                            <div class="text-full-width">
-                                <p style="margin-top: 8px; color: #c9302c; font-size: 12px;">⚠️ 구글 검색 등에서 복사한 엄청나게 긴 URL(Data URI 등)를 넣으면 데이터 제한 초과로 저장이 실패할 수 있습니다. 가급적 Imgur 등에 업로드한 짧은 주소를 사용하세요.</p>
-                            </div>
-                        </div>
-                    </details>
-
-                <div class="editor-actions" style="margin-top: 5px; margin-bottom: 5px">
-                    <button class="btn-secondary" id="btn-reset-design" style="flex:1;">↺ 개별 설정 초기화</button>
-                    <button class="btn-primary" id="btn-apply-design">💾 설정 저장</button>
-                </div>
-                <div class="editor-actions" style="margin-top: 10px; border-top: 1px solid #333;">
-                    <button class="btn-secondary" id="btn-apply-global"style="flex:1;">🌍 선택된 디자인을 글로벌 테마로</button>
-                    <button class="btn-danger" id="btn-reset-global-design">🌍 글로벌 테마 초기화</button>
-                </div>
+                <div class="editor-actions" style="margin-top: 5px; margin-bottom: 5px"><button class="btn-secondary" id="btn-reset-design" style="flex:1;" data-i18n="btn_reset_indiv"></button><button class="btn-primary" id="btn-apply-design" data-i18n="btn_save"></button></div>
+                <div class="editor-actions" style="margin-top: 10px; border-top: 1px solid #333;"><button class="btn-secondary" id="btn-apply-global"style="flex:1;" data-i18n="btn_apply_glob"></button><button class="btn-danger" id="btn-reset-global-design" data-i18n="btn_reset_glob"></button></div>
             </div>
 
             <div id="pane-controller" class="tab-pane">
-                <div class="section-title">컨트롤러 바디 커스터마이징</div>
+                <div class="section-title" data-i18n="title_ctrl"></div>
                 <div class="editor-grid design-grid">
-                    <label>너비 (W px)<input type="number" id="ctrl-w" min="100" max="2000"></label>
-                    <label>높이 (H px)<input type="number" id="ctrl-h" min="100" max="2000"></label>
-                    <label>배경 색상<input type="color" id="ctrl-bgC"></label>
-                    <label>배경 색상 미리보기<input type="text" id="ctrl-bgC-text" readonly style="background: #1a1a19; cursor: not-allowed;"></label>
-
-                    <label class="text-full-width">배경 이미지 URL
-                        <input type="text" id="ctrl-bgI" class="url-input" placeholder="https://... (배경이 투명하거나 불투명한 이미지)">
-                    </label>
+                    <label><span data-i18n="lbl_w"></span><input type="number" id="ctrl-w" min="100" max="2000"></label>
+                    <label><span data-i18n="lbl_h"></span><input type="number" id="ctrl-h" min="100" max="2000"></label>
+                    <label><span data-i18n="lbl_ctrl_bg"></span><input type="color" id="ctrl-bgC"></label>
+                    <label><span data-i18n="lbl_ctrl_preview"></span><input type="text" id="ctrl-bgC-text" readonly style="background: #1a1a19; cursor: not-allowed;"></label>
+                    <label class="text-full-width"><span data-i18n="lbl_ctrl_img"></span><input type="text" id="ctrl-bgI" class="url-input" data-i18n-ph="ph_ctrl_img"></label>
                 </div>
-
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="btn-secondary" id="btn-reset-controller" style="flex:1;">↺ 컨트롤러 바디 초기화</button>
-                    <button class="btn-primary" id="btn-apply-controller">✅ 컨트롤러 바디 적용</button>
+                    <button class="btn-secondary" id="btn-reset-controller" style="flex:1;" data-i18n="btn_ctrl_reset"></button>
+                    <button class="btn-primary" id="btn-apply-controller" data-i18n="btn_ctrl_apply"></button>
                 </div>
             </div>
 
-            <div class="section-title">하드웨어 입력 매핑</div>
+            <div class="section-title" data-i18n="title_map"></div>
             <div class="mapping-control">
                 <select id="map-src"></select> <span>➡️</span> <select id="map-tgt"></select>
-                <button class="btn-primary" id="btn-add-map">추가</button>
+                <button class="btn-primary" id="btn-add-map" data-i18n="btn_add"></button>
             </div>
             <ul class="mapping-list" id="mapping-list"></ul>
 
             <label style="display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 10px; cursor: pointer; margin-top: 10px;">
-                <input type="checkbox" id="toggle-stick-line" style="width:16px; height:16px;"> 스틱 방향 지시선 표시
+                <input type="checkbox" id="toggle-stick-line" style="width:16px; height:16px;"><span data-i18n="lbl_stick_line"></span>
             </label>
 
             <div class="footer-controls">
-                <button class="btn-copy" id="btn-copy-url">🔗 URL 복사 (OBS용)</button>
-                <button class="btn-secondary" id="btn-close-modal">닫기 (C)</button>
+                <button class="btn-copy" id="btn-copy-url" data-i18n="btn_copy_url"></button>
+                <button class="btn-secondary" id="btn-close-modal" data-i18n="btn_close"></button>
             </div>
         </div>
     </div>
 
+    <script src="js/i18n.js"></script>
     <script src="js/state.js"></script>
     <script src="js/editor.js"></script>
     <script src="js/input.js"></script>
     
     <script>
+        window.applyTranslations();
         window.loadFromURL();
         window.applyLayouts();
         window.populateDropdowns();
