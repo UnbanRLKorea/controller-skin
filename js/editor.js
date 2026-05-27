@@ -156,6 +156,69 @@ function updateLayoutRealtime() {
     loadLayoutIntoInputs(); 
 }
 
+// 각 버튼별 기본 레이아웃 값 (CSS와 일치)
+const DEFAULT_LAYOUTS = {
+    "btn-0": { x: 390, y: 115, w: 40, h: 40, r: 50 },
+    "btn-1": { x: 430, y: 75, w: 40, h: 40, r: 50 },
+    "btn-2": { x: 350, y: 75, w: 40, h: 40, r: 50 },
+    "btn-3": { x: 390, y: 35, w: 40, h: 40, r: 50 },
+    "btn-4": { x: 70, y: -10, w: 80, h: 25, r: 8 },
+    "btn-5": { x: 350, y: -10, w: 80, h: 25, r: 8 },
+    "btn-8": { x: 190, y: 75, w: 30, h: 20, r: 10 },
+    "btn-9": { x: 280, y: 75, w: 30, h: 20, r: 10 },
+    "btn-12": { x: 150, y: 145, w: 30, h: 30, r: 5 },
+    "btn-13": { x: 150, y: 205, w: 30, h: 30, r: 5 },
+    "btn-14": { x: 120, y: 175, w: 30, h: 30, r: 5 },
+    "btn-15": { x: 180, y: 175, w: 30, h: 30, r: 5 },
+    "btn-16": { x: 232, y: 80, w: 36, h: 10, r: 5 },
+    "stick-l": { x: 60, y: 55, w: 80, h: 80, r: 50 },
+    "stick-r": { x: 300, y: 150, w: 80, h: 80, r: 50 },
+    "trigger-box-6": { x: 80, y: -80, w: 40, h: 60, r: 5 },
+    "trigger-box-7": { x: 380, y: -80, w: 40, h: 60, r: 5 }
+};
+
+window.resetLayoutOnly = function() {
+    const id = layoutTarget.value;
+    if (!window.appState.l[id]) return;
+    
+    // 색상/이미지 설정은 유지하고 위치/크기만 초기화
+    const colors = {};
+    if (window.appState.l[id].bgC !== undefined) colors.bgC = window.appState.l[id].bgC;
+    if (window.appState.l[id].efC !== undefined) colors.efC = window.appState.l[id].efC;
+    if (window.appState.l[id].txtC !== undefined) colors.txtC = window.appState.l[id].txtC;
+    if (window.appState.l[id].txtAC !== undefined) colors.txtAC = window.appState.l[id].txtAC;
+    if (window.appState.l[id].bgI !== undefined) colors.bgI = window.appState.l[id].bgI;
+    if (window.appState.l[id].efI !== undefined) colors.efI = window.appState.l[id].efI;
+    const isCustom = window.appState.l[id].c !== undefined;
+    const text = window.appState.l[id].t !== undefined ? window.appState.l[id].t : undefined;
+    
+    // 각 버튼별 기본 레이아웃 값 적용
+    const defaults = DEFAULT_LAYOUTS[id];
+    if (defaults) {
+        window.appState.l[id].x = defaults.x;
+        window.appState.l[id].y = defaults.y;
+        window.appState.l[id].w = defaults.w;
+        window.appState.l[id].h = defaults.h;
+        window.appState.l[id].r = defaults.r;
+    } else {
+        // 커스텀 버튼인 경우 기본값 적용
+        window.appState.l[id].x = 0;
+        window.appState.l[id].y = 0;
+        window.appState.l[id].w = 40;
+        window.appState.l[id].h = 40;
+        window.appState.l[id].r = 50;
+    }
+    
+    // 색상/이미지 복원
+    Object.assign(window.appState.l[id], colors);
+    window.appState.l[id].c = isCustom;
+    if (text !== undefined) window.appState.l[id].t = text;
+    
+    window.applyLayouts();
+    loadLayoutIntoInputs();
+    window.saveToURL();
+};
+
 const inputs = ['edit-x','edit-y','edit-w','edit-h','edit-r','edit-text', 'edit-bgC','edit-efC','edit-txtC','edit-txtAC','edit-bgI','edit-efI'];
 inputs.forEach(id => {
     const el = document.getElementById(id);
@@ -261,10 +324,16 @@ document.getElementById('btn-add-custom').addEventListener('click', () => {
 
 btnResetLayout.addEventListener('click', () => {
     const id = layoutTarget.value;
+    // 커스텀 버튼인 경우: 매핑 삭제 + 완전 삭제 (기존 동작 유지)
     if (window.appState.l[id] && window.appState.l[id].c) {
         for (const [src, tgt] of Object.entries(window.appState.m)) if (tgt === id) delete window.appState.m[src];
+        delete window.appState.l[id]; 
+        window.saveToURL(); 
+        window.location.reload(); 
+        return;
     }
-    delete window.appState.l[id]; window.saveToURL(); window.location.reload(); 
+    // 기본 버튼인 경우: 위치/크기만 초기화, 색상은 유지
+    window.resetLayoutOnly();
 });
 
 document.getElementById('btn-apply-layout').addEventListener('click', () => {
