@@ -4,7 +4,7 @@
     background-image: var(--controller-bg-image, none);
     background-size: cover; background-position: center;
     border-radius: var(--controller-border-radius, 100px 100px 50px 50px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: var(--controller-shadow, 0 10px 30px rgba(0,0,0,0.5));
     transition: opacity 0.3s; opacity: 0.5;
 }
 .controller.connected { opacity: 1; }

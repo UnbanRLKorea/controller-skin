@@ -96,6 +96,8 @@ window.applyAllCustomizations = function() {
         let bgC = bgI === 'none' ? (window.appState.c.bgC || '#222222') : 'transparent';
         controller.style.setProperty('--controller-bg-color', bgC);
         controller.style.setProperty('--controller-bg-image', bgI);
+        // 이미지가 지정되면 그림자 제거, 없으면 기본 그림자 유지
+        controller.style.setProperty('--controller-shadow', bgI === 'none' ? '0 10px 30px rgba(0,0,0,0.5)' : 'none');
         // 이미지가 지정되면 모서리 제거하여 이미지 전체 표시, 아니면 기본 둥근 모서리 유지
         controller.style.setProperty('--controller-border-radius', bgI === 'none' ? '100px 100px 50px 50px' : '0');
     }
