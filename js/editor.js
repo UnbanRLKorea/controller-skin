@@ -404,7 +404,6 @@ function applyControllerSettings() {
     window.appState.c.h = parseInt(document.getElementById('ctrl-h').value) || 300;
 
     window.applyAllCustomizations();
-    window.applyControllerSize();
     window.saveToURL();
 
     const btn = document.getElementById('btn-apply-controller');
