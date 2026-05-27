@@ -1,0 +1,338 @@
+window.isEditMode = false;
+
+window.applyLayouts = function() {
+    document.querySelectorAll('.custom-added-btn').forEach(el => el.remove());
+    const container = document.getElementById('gamepad-ui');
+
+    for (const [id, layout] of Object.entries(window.appState.l)) {
+        let targetDomId = id;
+        if (id === 'stick-l') targetDomId = 'area-stick-l';
+        if (id === 'stick-r') targetDomId = 'area-stick-r';
+        
+        let el = document.getElementById(targetDomId);
+
+        if (!el && layout.c) {
+            el = document.createElement('div');
+            el.id = targetDomId; 
+            el.className = 'btn-wrapper custom-added-btn';
+            el.innerHTML = `<div class="layer-physical"></div><div class="layer-effect"></div><div class="btn-text"></div>`;
+            container.appendChild(el);
+        }
+        
+        if (el) {
+            el.style.left = layout.x + 'px'; el.style.top = layout.y + 'px';
+            el.style.width = layout.w + 'px'; el.style.height = layout.h + 'px';
+            if (layout.r !== undefined && layout.r !== '') el.style.borderRadius = layout.r + 'px';
+            el.style.right = 'auto'; el.style.bottom = 'auto';
+            
+            if (layout.t !== undefined && !targetDomId.includes('area-stick') && !targetDomId.includes('trigger-box')) {
+                const textNode = el.querySelector('.btn-text');
+                if(textNode) textNode.innerText = layout.t;
+            }
+        }
+    }
+    window.applyAllCustomizations(); 
+};
+
+const layoutTarget = document.getElementById('layout-target');
+const mapSrc = document.getElementById('map-src');
+const mapTgt = document.getElementById('map-tgt');
+const btnResetLayout = document.getElementById('btn-reset-layout');
+const toggleStickLine = document.getElementById('toggle-stick-line');
+
+// [버그 수정] 탭 전환 기능: e.target 대신 e.currentTarget 사용
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const targetPaneId = e.currentTarget.getAttribute('data-target');
+        if (!targetPaneId) return;
+
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+        
+        e.currentTarget.classList.add('active');
+        const targetElement = document.getElementById(targetPaneId);
+        if (targetElement) targetElement.classList.add('active');
+    });
+});
+
+window.populateDropdowns = function() {
+    const currentValue = layoutTarget.value;
+    layoutTarget.innerHTML = ''; mapTgt.innerHTML = '';
+    
+    Object.entries(window.baseVisuals).forEach(([val, name]) => {
+        layoutTarget.add(new Option(`[기본] ${name}`, val));
+        mapTgt.add(new Option(`[시각화] ${name}`, val));
+    });
+    for (const [id, layout] of Object.entries(window.appState.l)) {
+        if (layout.c) {
+            const label = `[커스텀] ${layout.t || id}`;
+            layoutTarget.add(new Option(label, id));
+            mapTgt.add(new Option(`[시각화] ${label}`, id));
+        }
+    }
+    if (currentValue && Array.from(layoutTarget.options).some(opt => opt.value === currentValue)) {
+        layoutTarget.value = currentValue;
+    }
+    
+    if(mapSrc.options.length === 0) {
+        for (let i = 0; i <= 31; i++) {
+            const displayName = window.hardwareInputNames[i] || `추가 신호`;
+            mapSrc.add(new Option(`[입력] ${displayName} (${i})`, i));
+        }
+    }
+    toggleStickLine.checked = window.appState.s.showStickLine;
+};
+
+toggleStickLine.addEventListener('change', (e) => {
+    window.appState.s.showStickLine = e.target.checked;
+    window.saveToURL();
+});
+
+function loadLayoutIntoInputs() {
+    const id = layoutTarget.value;
+    let targetDomId = id;
+    if (id === 'stick-l') targetDomId = 'area-stick-l';
+    if (id === 'stick-r') targetDomId = 'area-stick-r';
+    const el = document.getElementById(targetDomId);
+    
+    const l = window.appState.l[id] || {};
+    const g = window.appState.g;
+
+    document.getElementById('edit-x').value = l.x !== undefined ? l.x : (el ? el.offsetLeft : 0);
+    document.getElementById('edit-y').value = l.y !== undefined ? l.y : (el ? el.offsetTop : 0);
+    document.getElementById('edit-w').value = l.w !== undefined ? l.w : (el ? el.offsetWidth : 40);
+    document.getElementById('edit-h').value = l.h !== undefined ? l.h : (el ? el.offsetHeight : 40);
+    
+    const currentRadius = el ? parseInt(window.getComputedStyle(el).borderRadius) : 50;
+    document.getElementById('edit-r').value = l.r !== undefined ? l.r : (isNaN(currentRadius) ? 50 : currentRadius);
+    
+    const textInput = document.getElementById('edit-text');
+    if (targetDomId.includes('area-stick') || targetDomId.includes('trigger-box')) {
+        textInput.value = ''; textInput.disabled = true; textInput.placeholder = "텍스트 변경 불가";
+    } else {
+        const textNode = el ? el.querySelector('.btn-text') : null;
+        textInput.value = l.t !== undefined ? l.t : (textNode ? textNode.innerText : '');
+        textInput.disabled = false; textInput.placeholder = "예: C, Z, M1";
+    }
+
+    document.getElementById('edit-bgC').value = l.bgC || g.bgC;
+    document.getElementById('edit-efC').value = l.efC || g.efC;
+    document.getElementById('edit-txtC').value = l.txtC || g.txtC;
+    document.getElementById('edit-txtAC').value = l.txtAC || g.txtAC;
+    document.getElementById('edit-bgI').value = l.bgI || '';
+    document.getElementById('edit-efI').value = l.efI || '';
+
+    if (l.c) { 
+        btnResetLayout.innerText = "이 버튼 완전 삭제"; btnResetLayout.className = "btn-danger"; 
+    } else { 
+        btnResetLayout.innerText = "레이아웃 초기화"; btnResetLayout.className = "btn-warning"; 
+    }
+
+    document.querySelectorAll('.active-edit-target').forEach(e => e.classList.remove('active-edit-target'));
+    if (el) el.classList.add('active-edit-target');
+}
+
+function updateLayoutRealtime() {
+    const id = layoutTarget.value;
+    if(!window.appState.l[id]) window.appState.l[id] = {};
+    const l = window.appState.l[id];
+
+    l.x = parseInt(document.getElementById('edit-x').value) || 0;
+    l.y = parseInt(document.getElementById('edit-y').value) || 0;
+    l.w = parseInt(document.getElementById('edit-w').value) || 40;
+    l.h = parseInt(document.getElementById('edit-h').value) || 40;
+    l.r = parseInt(document.getElementById('edit-r').value) || 0;
+    l.t = document.getElementById('edit-text').value;
+
+    const bgC = document.getElementById('edit-bgC').value; if(bgC !== window.appState.g.bgC) l.bgC = bgC; else delete l.bgC;
+    const efC = document.getElementById('edit-efC').value; if(efC !== window.appState.g.efC) l.efC = efC; else delete l.efC;
+    const txtC = document.getElementById('edit-txtC').value; if(txtC !== window.appState.g.txtC) l.txtC = txtC; else delete l.txtC;
+    const txtAC = document.getElementById('edit-txtAC').value; if(txtAC !== window.appState.g.txtAC) l.txtAC = txtAC; else delete l.txtAC;
+    
+    l.bgI = document.getElementById('edit-bgI').value || undefined;
+    l.efI = document.getElementById('edit-efI').value || undefined;
+
+    window.applyLayouts(); 
+    loadLayoutIntoInputs(); 
+}
+
+const inputs = ['edit-x','edit-y','edit-w','edit-h','edit-r','edit-text', 'edit-bgC','edit-efC','edit-txtC','edit-txtAC','edit-bgI','edit-efI'];
+inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.addEventListener('input', updateLayoutRealtime);
+});
+
+document.getElementById('btn-apply-global').addEventListener('click', () => {
+    const g = window.appState.g;
+    g.bgC = document.getElementById('edit-bgC').value;
+    g.efC = document.getElementById('edit-efC').value;
+    g.txtC = document.getElementById('edit-txtC').value;
+    g.txtAC = document.getElementById('edit-txtAC').value;
+    g.bgI = document.getElementById('edit-bgI').value;
+    g.efI = document.getElementById('edit-efI').value;
+
+    Object.keys(window.appState.l).forEach(key => {
+        delete window.appState.l[key].bgC; delete window.appState.l[key].efC;
+        delete window.appState.l[key].txtC; delete window.appState.l[key].txtAC;
+        delete window.appState.l[key].bgI; delete window.appState.l[key].efI;
+    });
+
+    window.applyAllCustomizations();
+    window.saveToURL();
+    alert("현재 지정한 색상/이미지가 모든 버튼의 기본 테마로 덮어씌워졌습니다!");
+});
+
+document.getElementById('btn-reset-design').addEventListener('click', () => {
+    const id = layoutTarget.value;
+    if(window.appState.l[id]) {
+        delete window.appState.l[id].bgC; delete window.appState.l[id].efC;
+        delete window.appState.l[id].txtC; delete window.appState.l[id].txtAC;
+        delete window.appState.l[id].bgI; delete window.appState.l[id].efI;
+    }
+    loadLayoutIntoInputs(); window.applyCustomization(id); window.saveToURL();
+});
+
+const modal = document.getElementById('settings-modal');
+function toggleModal() {
+    modal.classList.toggle('hidden');
+    window.isEditMode = !modal.classList.contains('hidden');
+    if (window.isEditMode) {
+        document.body.classList.add('edit-mode');
+        window.populateDropdowns(); loadLayoutIntoInputs(); renderMappingList(); loadControllerSettings();
+    } else {
+        document.body.classList.remove('edit-mode');
+        document.querySelectorAll('.active-edit-target').forEach(e => e.classList.remove('active-edit-target'));
+    }
+}
+window.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 'c' && document.activeElement.tagName !== 'INPUT') toggleModal(); });
+document.getElementById('btn-close-modal').addEventListener('click', toggleModal);
+document.getElementById('btn-close-top').addEventListener('click', toggleModal);
+layoutTarget.addEventListener('change', loadLayoutIntoInputs);
+
+let isDragging = false, dragTargetId = null;
+let dragStartX = 0, dragStartY = 0, elStartX = 0, elStartY = 0;
+
+document.addEventListener('mousedown', (e) => {
+    if (!window.isEditMode) return;
+    if (e.target.closest('#settings-modal')) return;
+    let targetNode = e.target.closest('[id]');
+    if (!targetNode) return;
+    let id = targetNode.id;
+
+    if (id.includes('trigger-bar') || id.includes('layer-')) id = targetNode.parentElement.id;
+    if (id.includes('trigger-bar')) id = id.replace('bar', 'box');
+    if (id === 'stick-line-l' || id === 'area-stick-l') id = 'stick-l';
+    if (id === 'stick-line-r' || id === 'area-stick-r') id = 'stick-r';
+
+    if (!window.baseVisuals[id] && !(window.appState.l[id] && window.appState.l[id].c)) {
+        let parentId = targetNode.parentElement?.id;
+        if (parentId === 'area-stick-l') parentId = 'stick-l';
+        if (parentId === 'area-stick-r') parentId = 'stick-r';
+        if (parentId && (window.baseVisuals[parentId] || (window.appState.l[parentId] && window.appState.l[parentId].c))) id = parentId;
+        else return; 
+    }
+
+    e.preventDefault(); isDragging = true; dragTargetId = id;
+    layoutTarget.value = id; loadLayoutIntoInputs();
+    if (!window.appState.l[id]) updateLayoutRealtime(); 
+
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    elStartX = window.appState.l[id].x; elStartY = window.appState.l[id].y;
+});
+
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging || !dragTargetId) return;
+    window.appState.l[dragTargetId].x = elStartX + (e.clientX - dragStartX);
+    window.appState.l[dragTargetId].y = elStartY + (e.clientY - dragStartY);
+    document.getElementById('edit-x').value = window.appState.l[dragTargetId].x;
+    document.getElementById('edit-y').value = window.appState.l[dragTargetId].y;
+    window.applyLayouts();
+});
+
+document.addEventListener('mouseup', () => {
+    if (isDragging) { isDragging = false; dragTargetId = null; window.saveToURL(); }
+});
+
+document.getElementById('btn-add-custom').addEventListener('click', () => {
+    const newId = 'btn-c-' + Date.now();
+    window.appState.l[newId] = { x: 230, y: 150, w: 40, h: 40, r: 50, t: "NEW", c: true };
+    window.applyLayouts(); window.populateDropdowns(); layoutTarget.value = newId; loadLayoutIntoInputs(); window.saveToURL();
+});
+
+btnResetLayout.addEventListener('click', () => {
+    const id = layoutTarget.value;
+    if (window.appState.l[id] && window.appState.l[id].c) {
+        for (const [src, tgt] of Object.entries(window.appState.m)) if (tgt === id) delete window.appState.m[src];
+    }
+    delete window.appState.l[id]; window.saveToURL(); window.location.reload(); 
+});
+
+document.getElementById('btn-apply-layout').addEventListener('click', () => {
+    window.saveToURL();
+    const btn = document.getElementById('btn-apply-layout');
+    const originalText = btn.innerText;
+    btn.innerText = "✔️ 저장 완료!"; btn.style.background = "#3b82f6"; btn.style.color = "#fff";
+    setTimeout(() => { btn.innerText = originalText; btn.style.background = ""; btn.style.color = ""; }, 1000);
+});
+
+document.getElementById('btn-add-map').addEventListener('click', () => {
+    window.appState.m[mapSrc.value] = mapTgt.value; renderMappingList(); window.saveToURL();
+});
+
+function renderMappingList() {
+    const list = document.getElementById('mapping-list'); list.innerHTML = '';
+    for (const [src, tgt] of Object.entries(window.appState.m)) {
+        const li = document.createElement('li');
+        const srcName = mapSrc.querySelector(`option[value="${src}"]`)?.text || `신호 ${src}`;
+        const tgtName = mapTgt.querySelector(`option[value="${tgt}"]`)?.text || tgt;
+        li.innerHTML = `<span><b>${srcName}</b> ➡️ <b>${tgtName}</b></span>
+                        <button class="btn-danger" style="padding:4px 8px; font-size:11px;" onclick="deleteMap('${src}')">삭제</button>`;
+        list.appendChild(li);
+    }
+}
+window.deleteMap = function(src) { delete window.appState.m[src]; renderMappingList(); window.saveToURL(); }
+
+document.getElementById('btn-copy-url').addEventListener('click', () => {
+    navigator.clipboard.writeText(window.location.href).then(() => alert("설정이 포함된 URL이 복사되었습니다!"));
+});
+
+function loadControllerSettings() {
+    const c = window.appState.c || {};
+    document.getElementById('ctrl-bgC').value = c.bgC || '#222222';
+    document.getElementById('ctrl-bgC-text').value = c.bgC || '#222222';
+    document.getElementById('ctrl-bgI').value = c.bgI || '';
+}
+
+function updateControllerPreview() {
+    const bgC = document.getElementById('ctrl-bgC').value;
+    document.getElementById('ctrl-bgC-text').value = bgC;
+}
+
+function applyControllerSettings() {
+    if (!window.appState.c) window.appState.c = {};
+    window.appState.c.bgC = document.getElementById('ctrl-bgC').value || '#222222';
+    window.appState.c.bgI = document.getElementById('ctrl-bgI').value || '';
+
+    window.applyAllCustomizations();
+    window.saveToURL();
+
+    const btn = document.getElementById('btn-apply-controller');
+    const originalText = btn.innerText;
+    btn.innerText = "✔️ 적용 완료!";
+    btn.style.background = "#3b82f6";
+    setTimeout(() => {
+        btn.innerText = originalText;
+        btn.style.background = "";
+    }, 1000);
+}
+
+document.getElementById('btn-apply-controller').addEventListener('click', applyControllerSettings);
+
+document.getElementById('ctrl-bgC').addEventListener('input', updateControllerPreview);
+
+document.getElementById('btn-reset-controller').addEventListener('click', () => {
+    window.appState.c = { bgC: '#222222', bgI: '' };
+    loadControllerSettings();
+    window.applyAllCustomizations();
+    window.saveToURL();
+});

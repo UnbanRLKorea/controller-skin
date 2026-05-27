@@ -1,0 +1,61 @@
+.controller {
+    position: relative; width: 500px; height: 270px;
+    background-color: var(--controller-bg-color, #222);
+    background-image: var(--controller-bg-image, none);
+    background-size: cover; background-position: center;
+    border-radius: var(--controller-border-radius, 100px 100px 50px 50px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: opacity 0.3s; opacity: 0.5;
+}
+.controller.connected { opacity: 1; }
+
+.btn-wrapper {
+    position: absolute; display: flex; justify-content: center; align-items: center;
+    box-sizing: border-box; transition: transform 0.05s; z-index: 10; border-radius: 50%;
+}
+.layer-physical {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit;
+    background-color: var(--bg-color, #444);
+    background-image: var(--bg-image, none);
+    background-size: cover; background-position: center;
+}
+.layer-effect {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: inherit;
+    background-color: var(--effect-color, #00ff88);
+    background-image: var(--effect-image, none);
+    background-size: cover; background-position: center;
+    box-shadow: 0 0 15px var(--glow-color, #00ff88);
+    opacity: 0; transition: opacity 0.05s; z-index: 1;
+}
+.btn-text {
+    position: relative; z-index: 2; font-weight: bold; pointer-events: none;
+    color: var(--text-color, #888); font-size: inherit; transition: color 0.05s;
+}
+
+.btn-wrapper.active { transform: scale(0.9); }
+.btn-wrapper.active .layer-effect { opacity: 1; }
+.btn-wrapper.active .btn-text { color: var(--text-active-color, #000); }
+
+/* 트리거 특수 구조 반영 (linear-gradient에 효과 색상 연동) */
+.trigger-container { position: absolute; width: 40px; height: 60px; background: #111; border-radius: 5px; overflow: hidden; border: 2px solid #444; }
+.trigger-bar { position: absolute; bottom: 0; width: 100%; height: 0%; background: linear-gradient(to top, transparent, var(--effect-color, #00ff88)); transition: height 0.03s linear; z-index: 1; }
+.trigger-container.active { border-color: var(--effect-color, #00ff88); box-shadow: 0 0 10px var(--glow-color, rgba(0, 255, 136, 0.5)); }
+#trigger-box-6 { left: 80px; top: -80px; } #trigger-box-7 { left: 380px; top: -80px; }
+
+.bumper { width: 80px; height: 25px; border-radius: 8px; }
+#btn-4 { left: 70px; top: -10px; } #btn-5 { left: 350px; top: -10px; }
+
+.btn-center { width: 30px; height: 20px; border-radius: 10px; font-size: 10px; }
+#btn-8 { left: 190px; top: 75px; } #btn-16 { left: 232px; top: 80px; width: 36px; height: 10px;} #btn-9 { left: 280px; top: 75px; }
+
+.btn-action { width: 40px; height: 40px; }
+#btn-3 { left: 390px; top: 35px; } #btn-2 { left: 350px; top: 75px; } #btn-1 { left: 430px; top: 75px; } #btn-0 { left: 390px; top: 115px; }
+
+.btn-dpad { width: 30px; height: 30px; border-radius: 5px; }
+#btn-12 { left: 150px; top: 145px; } #btn-13 { left: 150px; top: 205px; } #btn-14 { left: 120px; top: 175px; } #btn-15 { left: 180px; top: 175px; } 
+
+.stick-area { position: absolute; width: 80px; height: 80px; background: #111; border-radius: 50%; }
+.stick-line { position: absolute; top: 40px; left: 40px; height: 3px; margin-top: -1.5px; background: #fff; transform-origin: 0% 50%; pointer-events: none; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 20; border-radius: 2px; }
+.stick { width: 50px; height: 50px; top: 15px; left: 15px; } 
+.stick.active .layer-effect { box-shadow: inset 0 0 5px #000, 0 0 15px var(--glow-color, #00ff88); }
+#area-stick-l { left: 60px; top: 55px; } #area-stick-r { left: 300px; top: 150px; }

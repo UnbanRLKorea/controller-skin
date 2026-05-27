@@ -1,0 +1,54 @@
+/* 기본 초기화 생략 (이전과 동일) */
+body { background-color: transparent; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; user-select: none; }
+#toast-hint { position: absolute; top: 20px; left: 20px; background: rgba(20, 20, 20, 0.8); border: 1px solid #444; color: #00ff88; padding: 10px 15px; border-radius: 8px; font-size: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); animation: fadeOut 5s forwards; pointer-events: none; z-index: 50; }
+@keyframes fadeOut { 0% { opacity: 0; transform: translateY(-10px); } 10% { opacity: 1; transform: translateY(0); } 80% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; visibility: hidden; } }
+
+body.edit-mode .btn-wrapper, body.edit-mode .stick-area, body.edit-mode .trigger-container { cursor: grab; }
+body.edit-mode .btn-wrapper:active, body.edit-mode .stick-area:active, body.edit-mode .trigger-container:active { cursor: grabbing; }
+.active-edit-target { outline: 2px dashed #00ff88 !important; outline-offset: 2px; box-shadow: 0 0 15px rgba(0, 255, 136, 0.5) !important; z-index: 100; }
+
+#settings-modal { position: fixed; top: 20px; right: 20px; bottom: 20px; display: flex; flex-direction: column; justify-content: flex-start; z-index: 1000; opacity: 1; transition: opacity 0.3s, transform 0.3s; }
+#settings-modal.hidden { opacity: 0; pointer-events: none; transform: translateX(50px); }
+.modal-content { background: rgba(35, 35, 35, 0.95); padding: 20px 25px; border-radius: 12px; width: 400px; max-height: 100%; overflow-y: auto; overflow-x: hidden; box-shadow: -5px 10px 40px rgba(0,0,0,0.7); border: 1px solid #555; backdrop-filter: blur(10px); }
+.modal-content h2 { margin-top: 0; font-size: 18px; border-bottom: 1px solid #444; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
+
+/* [NEW] 탭 네비게이션 스타일 */
+.tabs { display: flex; border-bottom: 2px solid #444; margin-bottom: 15px; }
+.tab-btn { background: transparent; color: #888; border: none; padding: 10px 15px; font-weight: bold; cursor: pointer; transition: 0.2s; border-radius: 5px 5px 0 0; }
+.tab-btn:hover { background: #333; color: white; }
+.tab-btn.active { color: #00ff88; border-bottom: 2px solid #00ff88; margin-bottom: -2px; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+#modal-status { font-size: 12px; color: #aaa; margin-bottom: 15px; padding: 8px; background: #1a1a1a; border-radius: 5px; border: 1px solid #333; }
+.section-title { font-size: 13px; color: #00ff88; margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #555; padding-bottom: 5px; display: flex; justify-content: space-between; }
+.realtime-badge { font-size: 10px; background: #3b82f6; color: white; padding: 2px 6px; border-radius: 10px; letter-spacing: 0.5px;}
+.editor-header { display: flex; gap: 10px; margin-bottom: 15px; align-items: center; }
+.editor-header select { flex-grow: 1; }
+.editor-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin-bottom: 10px; }
+.editor-grid label { display: flex; flex-direction: column; font-size: 11px; color: #aaa; gap: 4px; white-space: nowrap; }
+.editor-grid input { width: 100%; min-width: 0; box-sizing: border-box; background: #111; border: 1px solid #555; color: white; padding: 6px; border-radius: 4px; outline: none; transition: border 0.2s; }
+.editor-grid input[type="color"] { padding: 2px; height: 28px; cursor: pointer; }
+.editor-grid input:focus { border-color: #00ff88; }
+.text-full-width { grid-column: span 4; }
+
+/* 디자인 탭 전용 그리드 (2열로 색상 피커 배치) */
+.design-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.warning-text { font-size: 11px; color: #ffaa00; background: rgba(255, 170, 0, 0.1); padding: 8px; border-radius: 5px; margin-top: 5px; word-break: keep-all; white-space: normal; }
+
+.editor-actions { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 20px; }
+.mapping-control { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+select { background: #111; color: white; border: 1px solid #555; padding: 8px; border-radius: 5px; flex-grow: 1; outline: none; font-size: 13px; min-width: 0; }
+button { font-family: inherit; cursor: pointer; transition: background 0.2s, transform 0.1s; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; white-space: nowrap; }
+button:active { transform: scale(0.95); }
+.btn-primary { background: #00ff88; color: #000; } .btn-primary:hover { background: #00cc6a; }
+.btn-secondary { background: #444; color: #fff; } .btn-secondary:hover { background: #555; }
+.btn-danger { background: #ff4444; color: white; } .btn-danger:hover { background: #cc0000; }
+.btn-warning { background: #f59e0b; color: white; } .btn-warning:hover { background: #d97706; }
+ul.mapping-list { list-style: none; padding: 0; margin: 0 0 10px 0; max-height: 120px; overflow-y: auto; background: #1a1a1a; border-radius: 5px; border: 1px solid #333; }
+ul.mapping-list li { margin: 0; padding: 8px 12px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+ul.mapping-list li:last-child { border-bottom: none; }
+.footer-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; border-top: 1px solid #444; padding-top: 15px; }
+.btn-copy { background: #3b82f6; color: white; display: flex; align-items: center; gap: 5px; } .btn-copy:hover { background: #2563eb; }
+::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; } ::-webkit-scrollbar-thumb:hover { background: #888; }
